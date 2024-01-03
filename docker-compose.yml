@@ -1,0 +1,57 @@
+version: '3.8'
+services:
+  influxdb:
+    image: influxdb
+    container_name: influxdb
+    ports:
+      - "8086:8086"
+    environment:
+      - INFLUXDB_DB=network_traffic
+      - INFLUXDB_ADMIN_USER=admin
+      - INFLUXDB_ADMIN_PASSWORD=adminpass
+      - INFLUXDB_USER=user
+      - INFLUXDB_USER_PASSWORD=userpass
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=admin
+      - DOCKER_INFLUXDB_INIT_PASSWORD=adminpass
+      - DOCKER_INFLUXDB_INIT_ORG=test org
+      - DOCKER_INFLUXDB_INIT_BUCKET=test_bucket
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=initial_token
+    volumes:
+      - ./influxdb-data:/var/lib/influxdb
+
+  mongo:
+    container_name: mongo
+    image: mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: network_traffic
+    volumes:
+      - ./config/mongodb.config:/etc/mongod.conf
+      - ./mongodb-data:/data/db
+    networks:
+      - mongo-network
+
+  mongo-express:
+    container_name: mongo_express
+    image: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongo
+      ME_CONFIG_MONGODB_PORT: 27017
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: password
+    depends_on:
+      - mongo
+    networks:
+      - mongo-network
+
+networks:
+  mongo-network:
+    driver: bridge
