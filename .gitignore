@@ -1,5 +1,6 @@
 influxdb-data
 mongodb-data
+grafana-data
 logs
 *.pcap
 

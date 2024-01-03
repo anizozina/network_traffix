@@ -18,7 +18,7 @@ services:
       - DOCKER_INFLUXDB_INIT_BUCKET=test_bucket
       - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=initial_token
     volumes:
-      - ./influxdb-data:/var/lib/influxdb
+      - ./influxdb-data:/var/lib/influxdb2
 
   mongo:
     container_name: mongo
@@ -51,6 +51,20 @@ services:
       - mongo
     networks:
       - mongo-network
+
+  grafana:
+    image: grafana/grafana-oss
+    container_name: grafana
+    ports:
+      - 8085:3000
+    volumes:
+      - ./grafana-data:/var/lib/grafana
+    depends_on:
+      - influxdb
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=adminpass
+      - GF_SERVER_ROOT_URL=http://localhost:8085
 
 networks:
   mongo-network:
