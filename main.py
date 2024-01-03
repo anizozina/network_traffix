@@ -74,7 +74,8 @@ if __name__ == "__main__":
                 write_ip_host_mapping(ip_host_mapping)
                 data = convert_packet_to_data(packets)
                 influxGateway.write_packets(data)
-
+                os.replace(pcap_file_path, os.path.join(
+                    "./logs_done/", pcap_file))
     finally:
         mongoGateway.close_connection()
         influxGateway.close_connection()
