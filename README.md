@@ -1,7 +1,44 @@
-# Generate SSH key
+# What is this
+
+Visualize local network traffic.  
+
+# Expected Architecture
+
+In my environment. 
+
+```mermaid
+flowchart
+
+subgraph Internet
+  P[provider]
+end
+
+subgraph LAN [Local Area Network]
+  direction TB
+  Router[Router]
+  Switch[L2 Switch]
+  WiFi[Wi-Fi Router]
+  Node1[Rasberry pi]
+  Node2[Mac Studio]
+
+  Router -->|192.168.1.2| Switch
+  Switch --> WiFi
+  Switch -->|192.168.1.20| Node1
+  WiFi -->|192.168.1.3| Node2
+end
+
+P --> Router
+```
+
+All the network traffic is duplicated and transferred to Rasberry Pi.  
+`tcpdump` runs on Rasberry Pi and Mac Studio runs this script.  
+
+
+# Preparation
+## Generate SSH key
 For avoiding password prompting while `rsync`ing.
 
-```
+```sh
 # on client machine.
 
 $ ssh-keygen
@@ -34,7 +71,9 @@ $ vi ~/.ssh/authorized_keys
 # paste public key
 ```
 
-# Prepare
+## Install Dependencies
+
+required tools
 
 - docker compose
 - python 3
@@ -44,7 +83,7 @@ install dependencies before running.
 pip3 -r requirements.txt
 ```
 
-# Execution
+# Start to run
 
 Run tcpdump on server
 
